@@ -6,6 +6,7 @@ import argparse
 import urllib2
 from . import bottle
 
+self_dir = os.path.dirname(__file__)
 root_dir = None
 
 
@@ -191,5 +192,5 @@ def run(port=None, root=None):
     args = parser.parse_args()
     port = port or args.port or 7928
     root_dir = root or args.dir or os.getcwd()
-    GET('/+mookoo').load_html('help.html')
+    GET('/+mookoo').load_html(os.path.join(self_dir, 'help.html'))
     bottle.run(port=port, debug=True, reloader=True)
