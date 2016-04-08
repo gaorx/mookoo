@@ -3,6 +3,7 @@
 import os
 import json
 import argparse
+import urllib2
 from . import bottle
 
 root_dir = None
@@ -37,11 +38,34 @@ def load_json(filename):
         return load_text(filename)
 
 
+def proxy(url, **kwargs):
+    # TODO: Method, Header, Body
+    resp = None
+    try:
+        resp = urllib2.urlopen(url)
+        return resp.getcode(), dict(resp.info()), resp.read()
+    finally:
+        resp.close()
+
+
 def static_file(filename, download=False):
     download_filename = False
     if download:
         download_filename = os.path.basename(filename) if download is True else download
     return bottle.static_file(filename, root_dir, download=download_filename)
+
+
+def render(body, status=200, header=None, content_type=None, cookie=None):
+    bottle.response.status = status
+    if header:
+        for k, v in header.items():
+            bottle.response.set_header(k, str(v))
+    if content_type:
+        bottle.response.content_type = content_type
+    if cookie:
+        for cookie in Cookie.as_list(cookie):
+            bottle.response.set_cookie(cookie.name, cookie.value, secret=cookie.secret, **cookie.options)
+    return body() if callable(body) else body
 
 
 class Cookie(object):
@@ -58,17 +82,12 @@ class Response(object):
         self.body = body
         self.status, self.header, self.content_type, self.cookie = status, header, content_type, cookie
 
-    def gen_body(self):
-        bottle.response.status = self.status
-        if self.header:
-            for k, v in self.header.items():
-                bottle.response.set_header(k, str(v))
-        if self.content_type:
-            bottle.response.content_type = self.content_type
-        if self.cookie:
-            for cookie in Cookie.as_list(self.cookie):
-                bottle.response.set_cookie(cookie.name, cookie.value, secret=cookie.secret, **cookie.options)
-        return self.body() if callable(self.body) else self.body
+    def render(self):
+        return render(self.body,
+                      status=self.status,
+                      header=self.header,
+                      content_type=self.content_type,
+                      cookie=self.cookie)
 
 
 class Route(object):
@@ -78,7 +97,7 @@ class Route(object):
 
     def handle(self, *args, **kwargs):
         if self._response is not None:
-            return self._response.gen_body()
+            return self._response.render()
         else:
             bottle.response.status = 500
             bottle.response.content_type = 'text/plain'
@@ -107,7 +126,17 @@ class Route(object):
     def static_file(self, filename, download=False, **kwargs):
         return self.response(lambda: static_file(filename, download=download), **kwargs)
 
+    # proxy
+    def proxy(self, url, **proxy_args):
+        def do_proxy():
+            status, header, body = proxy(url, **proxy_args)
+            return render(body, status=status, content_type=header.get('content-type'))
+
+        self(do_proxy)
+        return self
+
     # Content
+
     def _make_content_resp(self, val, content_type, **kwargs):
         return self.response(val, content_type=content_type, **_remove_keys_copy(kwargs, 'content_type'))
 
