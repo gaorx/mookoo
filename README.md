@@ -34,6 +34,8 @@ run()
 
 ``` bash
 python mock.py
+# 也可以设定端口
+# python mock.py -p 9928
 ```
 
 然后在浏览器中就访问`http://localhost:7928/hello`，就可以看到
@@ -41,6 +43,10 @@ python mock.py
 ``` json
 {"message": "Hello Mookoo"}
 ```
+
+也可以访问`http://localhost:7928/+mookoo`查看此帮助文件
+
+
 
 ## 进阶
 
@@ -118,5 +124,6 @@ GET('/http_rfc').proxy('https://tools.ietf.org/rfc/rfc2616.txt')
 def _static_dir(filename):
     return mookoo.static_file(os.path.join('static_dir', filename))
 ```
+
 
 

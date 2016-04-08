@@ -181,11 +181,15 @@ run()</pre></div>
 
 <p>然后在shell中执行</p>
 
-<div class="highlight highlight-source-shell"><pre>python mock.py</pre></div>
+<div class="highlight highlight-source-shell"><pre>python mock.py
+<span class="pl-c"># 也可以设定端口</span>
+<span class="pl-c"># python mock.py -p 9928</span></pre></div>
 
 <p>然后在浏览器中就访问<code>http://localhost:7928/hello</code>，就可以看到</p>
 
 <div class="highlight highlight-source-json"><pre>{<span class="pl-s"><span class="pl-pds">"</span>message<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>Hello Mookoo<span class="pl-pds">"</span></span>}</pre></div>
+
+<p>也可以访问<code>http://localhost:7928/+mookoo</code>查看此帮助文件</p>
 
 <h2>
 <a id="user-content-进阶" class="anchor" href="#%E8%BF%9B%E9%98%B6" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>进阶</h2>
