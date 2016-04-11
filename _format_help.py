@@ -6,7 +6,9 @@ markdown_html = urllib2.urlopen('https://api.github.com/markdown', json.dumps(da
 
 TEMPLATE = """
 <html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <head>
+<title>MooKoo</title>
 <style>
 %(style)s
 </style>

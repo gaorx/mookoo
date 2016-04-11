@@ -33,7 +33,7 @@ def load_json(filename):
     _, ext = os.path.splitext(filename)
     if ext == '.py':
         l = {}
-        exec (load_text(filename), {'request': bottle.request}, l)
+        exec (load_text(filename), {'request': bottle.request, 'helpers': helpers}, l)
         return _to_json(l.get('JSON', None))
     else:
         return load_text(filename)
@@ -183,6 +183,27 @@ OPTIONS = _make_route('OPTIONS')
 HEAD = _make_route('HEAD')
 
 
+class _Helpers(dict):
+    def __getattr__(self, name):
+        return self[name]
+
+
+helpers = _Helpers()
+
+
+def helper(name=None):
+    if callable(name):
+        fn = name
+        helpers[fn.__name__] = fn
+        return name
+    else:
+        def decorator(fn_):
+            helpers[name if name else fn_.__name__] = fn_
+            return fn_
+
+        return decorator
+
+
 def run(port=None, root=None):
     global root_dir
 
@@ -193,4 +214,4 @@ def run(port=None, root=None):
     port = port or args.port or 7928
     root_dir = root or args.dir or os.getcwd()
     GET('/+mookoo').load_html(os.path.join(self_dir, 'help.html'))
-    bottle.run(port=port, debug=True, reloader=True)
+    bottle.run(host='', port=port, debug=True, reloader=True)
