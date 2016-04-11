@@ -238,12 +238,13 @@ def cli_entry():
 from mookoo import *
 GET('/hello').json({"message": "Hello, I am MooKoo!"})
 run()
-
-    """
+"""
 
     parser = argparse.ArgumentParser()
     parser.add_argument('proj_dir', help="Mock project directory", default='')
     args = parser.parse_args()
     proj_dir = os.path.abspath(args.proj_dir if args.proj_dir else os.getcwd())
     mkdir_p(proj_dir)
-    write_text_file(os.path.join(proj_dir, 'mock.py'), mock_templates.replace('\n', os.linesep))
+    mock_filename = os.path.join(proj_dir, 'mock.py')
+    if not os.path.exists(mock_filename):
+        write_text_file(mock_filename, mock_templates.replace('\n', os.linesep))
