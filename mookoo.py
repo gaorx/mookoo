@@ -215,3 +215,35 @@ def run(port=None, root=None):
     root_dir = root or args.dir or os.getcwd()
     GET('/+mookoo').load_html(os.path.join(self_dir, 'help.html'))
     bottle.run(host='', port=port, debug=True, reloader=True)
+
+
+def cli_entry():
+    import errno
+
+    def mkdir_p(dirname):
+        try:
+            os.makedirs(dirname)
+        except OSError as exc:
+            if exc.errno == errno.EEXIST and os.path.isdir(dirname):
+                pass
+            else:
+                raise
+
+    def write_text_file(filename, text):
+        with open(filename, 'w') as f:
+            f.write(text)
+
+    mock_file_lines = [
+        '# -*- coding: utf-8 -*-',
+        'from mookoo import *',
+        'GET(\'/hello\').json({"message": "Hello, MooKoo!"})',
+        'run()',
+        '',
+    ]
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('proj_dir', help="Mock project directory", default='')
+    args = parser.parse_args()
+    proj_dir = os.path.abspath(args.proj_dir if args.proj_dir else os.getcwd())
+    mkdir_p(proj_dir)
+    write_text_file(os.path.join(proj_dir, 'mock.py'), os.linesep.join(mock_file_lines))

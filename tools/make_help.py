@@ -20,7 +20,7 @@ TEMPLATE = """
 """
 
 html = TEMPLATE % {
-    'style': open('markdown.css').read(),
+    'style': open('tools/markdown.css').read(),
     'markdown': markdown_html,
 }
 open('help.html', 'w').write(html)

@@ -8,8 +8,8 @@ MooKoo是一个基于Python的Mock http server
 
 ``` bash
 pip install mookoo
-mkdir mock1; cd mock1
-# Edit mock files
+mookoo mock1 && cd mock1 && python mock.py
+# 在浏览器中访问 http://localhost:7928/hello
 ```
 
 ### 手工安装
@@ -17,7 +17,7 @@ mkdir mock1; cd mock1
 ``` bash
 mkdir mock1; cd mock1
 git clone https://github.com/gaorx/mookoo.git && rm -rf mookoo/.git
-# Edit mock files
+vim mock.py
 ```
 
 ## 起步
