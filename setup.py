@@ -22,7 +22,17 @@ setup(
     package_data={
         '': ['help.html', 'README.md', 'LICENSE'],
     },
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 2.7',
+        'Topic :: Utilities',
+        'Topic :: Software Development :: Libraries :: Python Modules'
+    ],
     entry_points={
         'console_scripts': ['mookoo = mookoo:cli_entry'],
-    }
+    },
 )
